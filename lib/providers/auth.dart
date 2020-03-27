@@ -10,11 +10,15 @@ class Auth extends ChangeNotifier {
   DateTime _tokenExpiryDate;
   String _userId;
   Timer _authTimer;
+  bool _isAdmin;
 
   bool get isAuth {
     return _token != null;
   }
 
+  bool get isAdmin {
+    return _isAdmin;
+  }
   String get token {
     if (_tokenExpiryDate != null &&
         _tokenExpiryDate.isAfter(DateTime.now()) &&
@@ -32,6 +36,7 @@ class Auth extends ChangeNotifier {
     _token = null;
     _userId = null;
     _tokenExpiryDate = null;
+    _isAdmin = null;
     if (_authTimer != null) {
       _authTimer.cancel();
       _authTimer = null;
@@ -41,7 +46,7 @@ class Auth extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> signIn(String email, String password) async {
+  Future<void> signIn(String email, String password, bool isAdmin) async {
     final _user = (await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password))
         .user;
@@ -50,6 +55,7 @@ class Auth extends ChangeNotifier {
     _tokenExpiryDate = _tokenResult.expirationTime;
 
     _userId = _user.uid;
+    _isAdmin = isAdmin;
 
     _autoLogout();
     notifyListeners();
@@ -59,6 +65,7 @@ class Auth extends ChangeNotifier {
       'token': _token,
       'userId': _userId,
       'expiryDate': _tokenExpiryDate.toIso8601String(),
+      'isAdmin': _isAdmin,
     });
     prefs.setString('userData', userData);
   }
@@ -100,6 +107,7 @@ class Auth extends ChangeNotifier {
 
     _token = extractedData['token'];
     _userId = extractedData['userId'];
+    _isAdmin = extractedData['isAdmin'];
     _tokenExpiryDate = expiryDate;
 
     notifyListeners();

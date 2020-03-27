@@ -54,9 +54,10 @@ class HomeScreen extends StatelessWidget {
                 ),
                 //TODO, MAP LOGIC HERE
                 child: Center(
-                  child: Text('map here..'),
+                  child: 
+                  Text('map here..'),
                   //use it only when in need avoid unnecessary requests google paise leta hai saala
-                  //HeatMap(),
+                  // child: HeatMap(),
                 ),
               ),
               Padding(

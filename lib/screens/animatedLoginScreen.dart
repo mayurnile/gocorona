@@ -439,10 +439,19 @@ class TeddyController extends FlareControls {
 
   void submitPassword(BuildContext context) async {
     try {
-      await Provider.of<Auth>(context).signIn(_email, _password);
+      bool _isAdmin = false;
+     if (_email == FirebaseUrl.ADMIN_ID) {
+       _isAdmin = true;
+     }
+      await Provider.of<Auth>(context).signIn(_email, _password, _isAdmin);
+      print(_email);
+      print(FirebaseUrl.ADMIN_ID);
       play("success");
       await Future.delayed(Duration(milliseconds: 200));
-      Navigator.of(context).pushReplacementNamed(Routes.TABS_SCREEN);
+
+        Navigator.of(context).pushReplacementNamed(Routes.ADMIN_SCREEN);
+
+        Navigator.of(context).pushReplacementNamed(Routes.TABS_SCREEN);
     } catch (e) {
       play("fail");
       print(e);

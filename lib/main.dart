@@ -9,6 +9,7 @@ import './screens/animatedLoginScreen.dart';
 import './screens/splashScreen.dart';
 import './screens/homeScreen.dart';
 import './screens/tabsScreen.dart';
+import './screens/adminScreen.dart';
 
 import 'constants/constants.dart';
 
@@ -73,7 +74,7 @@ class MyApp extends StatelessWidget {
             ),
           ),
           home: authData.isAuth
-              ? TabsScreen()
+              ? authData.isAdmin ? AdminScreen() : TabsScreen()
               : FutureBuilder(
                   future: authData.tryAutoLogin(),
                   builder: (ctx, authResultSnapshot) =>
@@ -83,6 +84,7 @@ class MyApp extends StatelessWidget {
                           : MyHomePage(),
                 ),
           routes: {
+            Routes.ADMIN_SCREEN: (ctx) => AdminScreen(),
             Routes.TABS_SCREEN: (ctx) => TabsScreen(),
             Routes.HOME_SCREEN: (ctx) => HomeScreen(),
           },
