@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../widgets/notification_panel.dart';
 import '../widgets/heat_map.dart';
 
+import '../constants/constants.dart';
+
 class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -24,15 +26,28 @@ class HomeScreen extends StatelessWidget {
       child: SingleChildScrollView(
         physics: BouncingScrollPhysics(),
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal : 10.0),
+          padding: const EdgeInsets.symmetric(horizontal: 10.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Padding(
                 padding: const EdgeInsets.all(16.0),
-                child: Text(
-                  'Heat Map',
-                  style: textTheme.subhead,
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      'Heat Map',
+                      style: textTheme.subhead,
+                    ),
+                    IconButton(
+                      icon: Icon(
+                        Icons.zoom_out_map,
+                        color: Colors.black,
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pushNamed(Routes.MAP_SCREEN);
+                      },
+                    ),
+                  ],
                 ),
               ),
               Container(
@@ -54,10 +69,10 @@ class HomeScreen extends StatelessWidget {
                 ),
                 //TODO, MAP LOGIC HERE
                 child: Center(
-                  child: 
-                  Text('map here..'),
+                  // child:
+                  // Text('map here..'),
                   //use it only when in need avoid unnecessary requests google paise leta hai saala
-                  // child: HeatMap(),
+                  child: HeatMap(),
                 ),
               ),
               Padding(

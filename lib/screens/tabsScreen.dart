@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../providers/auth.dart';
-
 import '../screens/homeScreen.dart';
+import '../screens/messageScreen.dart';
 
-import '../widgets/notification_panel.dart';
-
+import '../providers/auth.dart';
 class TabsScreen extends StatefulWidget {
   @override
   _TabsScreenState createState() => _TabsScreenState();
@@ -79,7 +77,7 @@ class _TabsScreenState extends State<TabsScreen>
           text: 'Home',
         ),
         Tab(
-          text: 'Help',
+          text: 'Message',
         ),
       ],
     );
@@ -115,7 +113,7 @@ class _TabsScreenState extends State<TabsScreen>
                 controller: _tabController,
                 children: <Widget>[
                   HomeScreen(),
-                  NotificationPanel(),
+                  MessageScreen(),
                 ],
               ),
             ),

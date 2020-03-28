@@ -10,6 +10,8 @@ import './screens/splashScreen.dart';
 import './screens/homeScreen.dart';
 import './screens/tabsScreen.dart';
 import './screens/adminScreen.dart';
+import './screens/messageScreen.dart';
+import './widgets/heat_map.dart';
 
 import 'constants/constants.dart';
 
@@ -87,6 +89,8 @@ class MyApp extends StatelessWidget {
             Routes.ADMIN_SCREEN: (ctx) => AdminScreen(),
             Routes.TABS_SCREEN: (ctx) => TabsScreen(),
             Routes.HOME_SCREEN: (ctx) => HomeScreen(),
+            Routes.MESSAGE_SCREEN: (ctx) => MessageScreen(),
+            Routes.MAP_SCREEN: (ctx) => HeatMap(),
           },
         ),
       ),

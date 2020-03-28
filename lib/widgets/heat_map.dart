@@ -16,32 +16,19 @@ class _HeatMapState extends State<HeatMap> {
   Geolocator geolocator = Geolocator();
 
   Position userLocation;
-  Widget _child;
-  String _userId = "";
 
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FirebaseUser user = null;
 
   @override
   void initState() {
-    // _child= RippleIndicator("Getting Location");
     super.initState();
-    _getLocation().then((position) {
-      userLocation = position;
-      getAddress(userLocation.latitude, userLocation.longitude);
-    });
-
-    // getCurrentLocation();
-  }
-
-  List<Placemark> placemark;
-  String address = "";
-
-  void getAddress(double latitude, double longitude) async {
-    placemark = await geolocator.placemarkFromCoordinates(latitude, longitude);
-
-    address =
-        placemark[0].name.toString() + "," + placemark[0].locality.toString();
+    _getLocation().then(
+      (position) {
+        userLocation = position;
+        //getAddress(userLocation.latitude, userLocation.longitude);
+      },
+    );
   }
 
   Future<Position> _getLocation() async {

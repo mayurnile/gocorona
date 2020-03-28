@@ -2,6 +2,8 @@ class Routes {
   static const ADMIN_SCREEN = '/admin-screen';
   static const TABS_SCREEN = '/tabs-screen';
   static const HOME_SCREEN = '/home-screen';
+  static const MESSAGE_SCREEN = '/message-screen';
+  static const MAP_SCREEN = '/map-screen';
 }
 
 class FirebaseUrl {
