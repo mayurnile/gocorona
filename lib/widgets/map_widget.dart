@@ -11,7 +11,7 @@ import 'package:firebase_database/firebase_database.dart';
 import '../providers/auth.dart';
 
 class MapWidget extends StatefulWidget {
-  final Position userLocation;
+  final userLocation;
 
   MapWidget({
     @required this.userLocation,
@@ -24,7 +24,7 @@ class MapWidget extends StatefulWidget {
 class _MapWidgetState extends State<MapWidget> {
   final databaseReference = FirebaseDatabase.instance.reference();
   Marker _marker;
-  GoogleMapController _controller;
+  Completer<GoogleMapController> _controller = Completer();
   Location _locationTracker = Location();
   Geolocator geolocator = Geolocator();
   StreamSubscription _locationSubscription;
@@ -32,11 +32,13 @@ class _MapWidgetState extends State<MapWidget> {
   String address = "";
   var overalluserid;
   var check = 0;
-  List<Marker> markers = [Marker(
-    markerId: MarkerId('12345678'),
-    position: LatLng(19.231280,73.13849),
-    icon: BitmapDescriptor.defaultMarker,
-  ),];
+  List<Marker> markers = [
+    // Marker(
+    //   markerId: MarkerId('12345678'),
+    //   position: LatLng(19.231280, 73.13849),
+    //   icon: BitmapDescriptor.defaultMarker,
+    // ),
+  ];
   Map<MarkerId, Marker> usersmarkers = <MarkerId, Marker>{};
 
   @override
@@ -56,6 +58,11 @@ class _MapWidgetState extends State<MapWidget> {
     super.didUpdateWidget(oldWidget);
   }
 
+  @override
+  void dispose() {
+    
+    super.dispose();
+  }
   void initmarker(double latitude, double longitude, String id) {
     final MarkerId diffuserid = MarkerId(id);
     print(diffuserid.toString());
@@ -168,7 +175,8 @@ class _MapWidgetState extends State<MapWidget> {
 
   Future<void> locateMe() async {
     try {
-      var location = await _locationTracker.getLocation();
+      //var location = await _locationTracker.getLocation();
+      var location = await Location().getLocation();
       getAddress(location.latitude, location.longitude);
       await updateMarkerAndCircle(location);
 
@@ -179,16 +187,16 @@ class _MapWidgetState extends State<MapWidget> {
       _locationSubscription = _locationTracker.onLocationChanged().listen(
         (newLocalData) {
           if (_controller != null) {
-            _controller.animateCamera(
-              CameraUpdate.newCameraPosition(
-                new CameraPosition(
-                  bearing: 192.8334901395799,
-                  target: LatLng(newLocalData.latitude, newLocalData.longitude),
-                  tilt: 0,
-                  zoom: 5.00,
-                ),
-              ),
-            );
+            // _controller.animateCamera(
+            //   CameraUpdate.newCameraPosition(
+            //     new CameraPosition(
+            //       //bearing: 192.8334901395799,
+            //       target: LatLng(newLocalData.latitude, newLocalData.longitude),
+            //       tilt: 0,
+            //       zoom: 5.00,
+            //     ),
+            //   ),
+            // );
             updateMarkerAndCircle(newLocalData);
           }
         },
@@ -208,7 +216,7 @@ class _MapWidgetState extends State<MapWidget> {
       body: ClipRRect(
         borderRadius: BorderRadius.circular(24),
         child: GoogleMap(
-          mapType: MapType.hybrid,
+          mapType: MapType.normal,
           buildingsEnabled: true,
           // markers: createMarker(),
           //markers: Set.of((_marker != null) ? [_marker] : []),
@@ -219,9 +227,9 @@ class _MapWidgetState extends State<MapWidget> {
             zoom: 5.0,
           ),
           onMapCreated: (GoogleMapController controller) {
-            setState(() {
-              _controller = controller;
-            });
+            _controller.complete(controller);
+            // setState(() {
+            // });
           },
         ),
       ),

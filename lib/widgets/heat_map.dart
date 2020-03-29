@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -15,7 +16,7 @@ class _HeatMapState extends State<HeatMap> {
   Position position;
   Geolocator geolocator = Geolocator();
 
-  Position userLocation;
+  var userLocation;
 
   final FirebaseAuth firebaseAuth = FirebaseAuth.instance;
   final FirebaseUser user = null;
@@ -23,22 +24,26 @@ class _HeatMapState extends State<HeatMap> {
   @override
   void initState() {
     super.initState();
-    _getLocation().then(
-      (position) {
-        userLocation = position;
-        //getAddress(userLocation.latitude, userLocation.longitude);
-      },
-    );
+    _getLocation();
+    // _getLocation().then(
+    //   (position) {
+    //     userLocation = position;
+    //     //getAddress(userLocation.latitude, userLocation.longitude);
+    //   },
+    // );
   }
 
-  Future<Position> _getLocation() async {
+  Future<void> _getLocation() async {
     var currentLocation;
     try {
-      currentLocation = await geolocator.getCurrentPosition();
+      // currentLocation = await geolocator.getCurrentPosition();
+      currentLocation = await Location().getLocation();
+      userLocation = currentLocation;
+      print('User Location : '+currentLocation.latitude+currentLocation.longitude);
     } catch (e) {
       currentLocation = null;
     }
-    return currentLocation;
+    //return currentLocation;
   }
 
   Future<FirebaseUser> getCurrentUser() async {
@@ -53,7 +58,10 @@ class _HeatMapState extends State<HeatMap> {
       builder: (ctx, snapshot) {
         return Container(
           child: snapshot.connectionState == ConnectionState.waiting
-              ? CircularProgressIndicator()
+              ? CircularProgressIndicator() 
+              // : Container(
+              //   child: Text('Location : ${userLocation.latitude} + ${userLocation.longitude}'),
+              // ),
               : MapWidget(
                   userLocation: userLocation,
                 ),
