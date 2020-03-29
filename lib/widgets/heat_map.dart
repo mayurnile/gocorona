@@ -5,7 +5,7 @@ import 'package:location/location.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import './map_widget.dart';
+import '../screens/myMapScreen.dart';
 
 class HeatMap extends StatefulWidget {
   @override
@@ -25,12 +25,6 @@ class _HeatMapState extends State<HeatMap> {
   void initState() {
     super.initState();
     _getLocation();
-    // _getLocation().then(
-    //   (position) {
-    //     userLocation = position;
-    //     //getAddress(userLocation.latitude, userLocation.longitude);
-    //   },
-    // );
   }
 
   Future<void> _getLocation() async {
@@ -39,7 +33,9 @@ class _HeatMapState extends State<HeatMap> {
       // currentLocation = await geolocator.getCurrentPosition();
       currentLocation = await Location().getLocation();
       userLocation = currentLocation;
-      print('User Location : '+currentLocation.latitude+currentLocation.longitude);
+      print('User Location : ' +
+          currentLocation.latitude +
+          currentLocation.longitude);
     } catch (e) {
       currentLocation = null;
     }
@@ -58,13 +54,11 @@ class _HeatMapState extends State<HeatMap> {
       builder: (ctx, snapshot) {
         return Container(
           child: snapshot.connectionState == ConnectionState.waiting
-              ? CircularProgressIndicator() 
+              ? CircularProgressIndicator()
               // : Container(
               //   child: Text('Location : ${userLocation.latitude} + ${userLocation.longitude}'),
               // ),
-              : MapWidget(
-                  userLocation: userLocation,
-                ),
+              : MyMapPage(),
         );
       },
     );

@@ -4,14 +4,14 @@ import 'dart:ui';
 
 import 'package:flutter/rendering.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flare_flutter/flare.dart';
 import 'package:flare_dart/math/mat2d.dart';
 import 'package:flare_dart/math/vec2d.dart';
 import 'package:flare_flutter/flare_controls.dart';
-import 'package:mm_hackathon/providers/auth.dart';
 import 'package:provider/provider.dart';
+
+import '../providers/auth.dart';
 
 import '../constants/constants.dart';
 
@@ -440,18 +440,18 @@ class TeddyController extends FlareControls {
   void submitPassword(BuildContext context) async {
     try {
       bool _isAdmin = false;
-     if (_email == FirebaseUrl.ADMIN_ID) {
-       _isAdmin = true;
-     }
+      if (_email == FirebaseUrl.ADMIN_ID) {
+        _isAdmin = true;
+      }
       await Provider.of<Auth>(context).signIn(_email, _password, _isAdmin);
       print(_email);
       print(FirebaseUrl.ADMIN_ID);
       play("success");
       await Future.delayed(Duration(milliseconds: 200));
 
-        Navigator.of(context).pushReplacementNamed(Routes.ADMIN_SCREEN);
+      Navigator.of(context).pushReplacementNamed(Routes.ADMIN_SCREEN);
 
-        Navigator.of(context).pushReplacementNamed(Routes.TABS_SCREEN);
+      Navigator.of(context).pushReplacementNamed(Routes.TABS_SCREEN);
     } catch (e) {
       play("fail");
       print(e);
@@ -542,7 +542,7 @@ class _TrackingTextInputState extends State<TrackingTextInput> {
         key: _fieldKey,
         controller: _textController,
         obscureText: widget.isObscured,
-        validator: (value) {},
+        //validator: (value) {},
       ),
     );
   }

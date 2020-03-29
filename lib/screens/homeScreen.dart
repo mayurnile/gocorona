@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import '../widgets/notification_panel.dart';
-import '../widgets/heat_map.dart';
+import '../screens/myMapScreen.dart';
 
-import '../constants/constants.dart';
+import '../widgets/heat_map.dart';
+import '../widgets/notification_panel.dart';
 
 class HomeScreen extends StatelessWidget {
   @override
@@ -38,13 +38,18 @@ class HomeScreen extends StatelessWidget {
                       'Heat Map',
                       style: textTheme.subhead,
                     ),
+                    Spacer(),
                     IconButton(
                       icon: Icon(
                         Icons.zoom_out_map,
                         color: Colors.black,
                       ),
                       onPressed: () {
-                        Navigator.of(context).pushNamed(Routes.MAP_SCREEN);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (ctx) => MyMapPage(),
+                          ),
+                        );
                       },
                     ),
                   ],
@@ -67,10 +72,8 @@ class HomeScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-                //TODO, MAP LOGIC HERE
                 child: Center(
-                  // child:
-                  // Text('map here..'),
+                  // child: Text('map here..'),
                   //use it only when in need avoid unnecessary requests google paise leta hai saala
                   child: HeatMap(),
                 ),
