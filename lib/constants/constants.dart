@@ -10,4 +10,5 @@ class FirebaseUrl {
   static const ADMIN_ID = 'admin@gmail.com';
   static const BASE_URL = 'https://corona-d20c3.firebaseio.com/';
   static const NOTIFICATION_URL = BASE_URL+'/notifications/';
+  static const ADMIN_NOTFICATION_URL = BASE_URL+'/admin/';
 }
