@@ -4,6 +4,7 @@ class Routes {
   static const HOME_SCREEN = '/home-screen';
   static const MESSAGE_SCREEN = '/message-screen';
   static const MAP_SCREEN = '/map-screen';
+  static const MAIN_CHAT_SCREEN = '/main-chat-screen';
 }
 
 class FirebaseUrl {

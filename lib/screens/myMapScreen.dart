@@ -58,13 +58,47 @@ class _MyMapPageState extends State<MyMapPage> {
     markers.add(differentuser);
   }
 
+int checkid = 0;
+
   void updateRecord(
       double latitude, double longitude, List<Placemark> placemark) {
-    int checkid = 0;
+
     databaseReference.child("LOCATIONS").once().then((DataSnapshot snapshot) {
       for (var userids in snapshot.value.keys) {
-        if (overalluserid == userids) {
+        if (overalluserid.toString() == userids.toString()) {
           checkid = 1;
+            if (checkid == 0) {
+              databaseReference.child("LOCATIONS").child(overalluserid).set({
+              'latitude': latitude,
+              'longitude': longitude,
+              'Address': address,
+              'Country': placemark[0].country,
+              'Locality': placemark[0].locality,
+              'AdministrativeArea': placemark[0].administrativeArea,
+              'PostalCode': placemark[0].postalCode,
+              'Name': placemark[0].name,
+              'ISO_CountryCode': placemark[0].isoCountryCode,
+              'SubLocality': placemark[0].subLocality,
+              'SubThoroughfare': placemark[0].subThoroughfare,
+              'Thoroughfare': placemark[0].thoroughfare,
+            });
+          } 
+          else {
+            databaseReference.child("LOCATIONS").child(overalluserid).update({
+              'latitude': latitude,
+              'longitude': longitude,
+              'Address': address,
+              'Country': placemark[0].country,
+              'Locality': placemark[0].locality,
+              'AdministrativeArea': placemark[0].administrativeArea,
+              'PostalCode': placemark[0].postalCode,
+              'Name': placemark[0].name,
+              'ISO_CountryCode': placemark[0].isoCountryCode,
+              'SubLocality': placemark[0].subLocality,
+              'SubThoroughfare': placemark[0].subThoroughfare,
+              'Thoroughfare': placemark[0].thoroughfare,
+            });
+          }
         }
       }
     });
@@ -77,6 +111,8 @@ class _MyMapPageState extends State<MyMapPage> {
             .once()
             .then((DataSnapshot snapshot) {
           if (snapshot.value != null) {
+            // print(snapshot.value['latitude']);
+            // print(snapshot.value['longitude']);
             initmarker(
               snapshot.value['latitude'],
               snapshot.value['longitude'],
@@ -87,37 +123,6 @@ class _MyMapPageState extends State<MyMapPage> {
       }
     });
 
-    if (checkid == 0) {
-      databaseReference.child("LOCATIONS").child(overalluserid).set({
-        'latitude': latitude,
-        'longitude': longitude,
-        'Address': address,
-        'Country': placemark[0].country,
-        'Locality': placemark[0].locality,
-        'AdministrativeArea': placemark[0].administrativeArea,
-        'PostalCode': placemark[0].postalCode,
-        'Name': placemark[0].name,
-        'ISO_CountryCode': placemark[0].isoCountryCode,
-        'SubLocality': placemark[0].subLocality,
-        'SubThoroughfare': placemark[0].subThoroughfare,
-        'Thoroughfare': placemark[0].thoroughfare,
-      });
-    } else {
-      databaseReference.child("LOCATIONS").child(overalluserid).update({
-        'latitude': latitude,
-        'longitude': longitude,
-        'Address': address,
-        'Country': placemark[0].country,
-        'Locality': placemark[0].locality,
-        'AdministrativeArea': placemark[0].administrativeArea,
-        'PostalCode': placemark[0].postalCode,
-        'Name': placemark[0].name,
-        'ISO_CountryCode': placemark[0].isoCountryCode,
-        'SubLocality': placemark[0].subLocality,
-        'SubThoroughfare': placemark[0].subThoroughfare,
-        'Thoroughfare': placemark[0].thoroughfare,
-      });
-    }
   }
 
   void getAddress(double latitude, double longitude) async {
@@ -153,6 +158,7 @@ class _MyMapPageState extends State<MyMapPage> {
             ),
           );
           updateMarkerAndCircle(newLocalData);
+          getAddress(newLocalData.latitude, newLocalData.longitude);
         }
       });
     } on PlatformException catch (e) {
@@ -200,3 +206,4 @@ class _MyMapPageState extends State<MyMapPage> {
     );
   }
 }
+ 

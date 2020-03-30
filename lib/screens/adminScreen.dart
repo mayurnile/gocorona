@@ -27,9 +27,10 @@ class _AdminScreenState extends State<AdminScreen> {
       form.save();
       print('Title : $_title');
       print('Message : $_message');
-      //TODO, code to store on database
-      await Provider.of<MyNotifications>(context)
-          .addNotificationAdmin(_title, _message);
+      await Provider.of<MyNotifications>(context).addNotificationAdmin(
+        _title,
+        _message,
+      );
     }
     setState(() {
       isLoading = false;
