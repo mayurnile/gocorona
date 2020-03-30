@@ -7,8 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
-
-
 class Auth extends ChangeNotifier {
   String _token;
   DateTime _tokenExpiryDate;
@@ -129,7 +127,7 @@ class Auth extends ChangeNotifier {
     prefs.setString('userData', userData);
   }
 
-  void updateToken() {
+  void updateToken() async {
     print('Function update token');
     print('Before Refresh : $_token');
     FirebaseAuth firebaseAuth = FirebaseAuth.instance;
@@ -141,8 +139,18 @@ class Auth extends ChangeNotifier {
           print('After Refresh : $_token');
         });
       });
+      final prefs = await SharedPreferences.getInstance();
+      String userData = json.encode({
+        'token': _token,
+        'userId': _userId,
+        'expiryDate': _tokenExpiryDate.toIso8601String(),
+        'isAdmin': _isAdmin,
+        'isCorona': _isCoronaOne,
+        'name': _name,
+      });
+      prefs.setString('userData', userData);
+      notifyListeners();
     }
-    notifyListeners();
   }
 
   Future<bool> tryAutoLogin() async {
@@ -199,8 +207,7 @@ class Auth extends ChangeNotifier {
   Future<void> setCoronaOne(bool value) async {
     _isCoronaOne = value;
     final databaseReference = FirebaseDatabase.instance.reference();
-     final FirebaseMessaging _fcm = FirebaseMessaging();
-     
+    final FirebaseMessaging _fcm = FirebaseMessaging();
 
     if (value == true) {
       _fcm.subscribeToTopic('CoronaYes');
@@ -223,7 +230,6 @@ class Auth extends ChangeNotifier {
           });
         }
       });
-       
 
       databaseReference.child("CoronaNo").child(_userId).remove();
       databaseReference.child("CoronaYes").child(_userId).set({
@@ -258,13 +264,14 @@ class Auth extends ChangeNotifier {
       'name': _name,
     });
     prefs.setString('userData', userData);
+    _autoLogout();
     notifyListeners();
   }
 
   Future<void> setCoronaTwo(bool value) async {
     _isCoronaTwo = value;
     final databaseReference = FirebaseDatabase.instance.reference();
-     final FirebaseMessaging _fcm = FirebaseMessaging();
+    final FirebaseMessaging _fcm = FirebaseMessaging();
     if (value == true) {
       _fcm.subscribeToTopic('CoronaYes');
       databaseReference.child("CoronaYes").once().then(
@@ -328,9 +335,9 @@ class Auth extends ChangeNotifier {
     }
     final timeToExpiry = _tokenExpiryDate.difference(DateTime.now()).inSeconds;
     print(timeToExpiry);
-    if(timeToExpiry < 20){
+    if (timeToExpiry < 20) {
       updateToken();
     }
-    _authTimer = Timer(Duration(seconds: timeToExpiry - 20), updateToken);
+    _authTimer = Timer(Duration(seconds: timeToExpiry - 500), updateToken);
   }
 }

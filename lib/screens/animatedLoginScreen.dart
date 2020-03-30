@@ -438,6 +438,7 @@ class TeddyController extends FlareControls {
   }
 
   void submitPassword(BuildContext context) async {
+    play("hands_down");
     try {
       bool _isAdmin = false;
       if (_email == FirebaseUrl.ADMIN_ID) {
