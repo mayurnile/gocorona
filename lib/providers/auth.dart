@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+
 
 class Auth extends ChangeNotifier {
   String _token;
@@ -141,8 +144,11 @@ class Auth extends ChangeNotifier {
   Future<void> setCoronaOne(bool value) async {
     _isCoronaOne = value;
     final databaseReference = FirebaseDatabase.instance.reference();
+     final FirebaseMessaging _fcm = FirebaseMessaging();
+     
 
     if (value == true) {
+      _fcm.subscribeToTopic('CoronaYes');
       databaseReference.child("CoronaYes").once().then((DataSnapshot snapshot) {
         print('${snapshot.value.keys}');
         // print(snapshot.value.keys);
@@ -162,6 +168,7 @@ class Auth extends ChangeNotifier {
           });
         }
       });
+       
 
       databaseReference.child("CoronaNo").child(_userId).remove();
       databaseReference.child("CoronaYes").child(_userId).set({
@@ -201,8 +208,9 @@ class Auth extends ChangeNotifier {
   Future<void> setCoronaTwo(bool value) async {
     _isCoronaTwo = value;
     final databaseReference = FirebaseDatabase.instance.reference();
-
+     final FirebaseMessaging _fcm = FirebaseMessaging();
     if (value == true) {
+      _fcm.subscribeToTopic('CoronaYes');
       databaseReference.child("CoronaYes").once().then(
         (DataSnapshot snapshot) {
           print('${snapshot.value.keys}');

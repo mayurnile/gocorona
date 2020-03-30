@@ -26,7 +26,12 @@ class _NotificationPanelState extends State<NotificationPanel> {
   }
 
   @override
-  void initState() {
+  void initState() {  
+
+    _firebaseMessaging.getToken();
+
+    _firebaseMessaging.subscribeToTopic('all');
+    
     _firebaseMessaging.configure(
       onMessage: (Map<String, dynamic> message) async {
         addToNotificationsList(message);
