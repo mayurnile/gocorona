@@ -44,25 +44,10 @@ class MyNotifications with ChangeNotifier {
     print(_notifications);
     notifyListeners();
   }
-  //phir code yaha pe ata hai idhar is function ko humne title and message pass kiya hai
-  //phir apna firebase me na database ka url hota hai ek
-  //voh vaha pe dikhaya voh toh maine voh ek file me store kr rakha hai
 
   Future<void> addNotificationAdmin(String title, String message) async {
     final url =
         FirebaseUrl.ADMIN_NOTFICATION_URL + '$userId.json?auth=$authToken';
-        //aur yaha pe jo age userId add kiya hai na voh age userId jo login krne ke bad create hota hai
-        //voh add krne keliye phir firebse hamein ek loginToken bhi deta hai ek random number for security reasons
-        //phor voh dono userid and token add kiya age link kee
-
-    //aur yaha pe maine firebase ko request bheja http.post
-    //yeh isko na REST API's bolte hai 
-    //server se baat cheet krne ka tarika
-    //3 type ke request hote hai 
-    //post : agar database me data enter krna ho toh
-    //put : agar database me data update krna ho toh
-    //get : agar database me se data fetch krna ho toh
-    //for example
     final response = await http.post(
       url,
       body: json.encode(

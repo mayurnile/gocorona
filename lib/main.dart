@@ -11,6 +11,8 @@ import './screens/homeScreen.dart';
 import './screens/tabsScreen.dart';
 import './screens/adminScreen.dart';
 import './screens/messageScreen.dart';
+import './screens/mainChatScreen.dart';
+
 import './widgets/heat_map.dart';
 
 import 'constants/constants.dart';
@@ -39,8 +41,13 @@ class MyApp extends StatelessWidget {
         builder: (ctx, authData, _) => MaterialApp(
           title: 'Corona Awareness',
           theme: ThemeData(
-            primaryColor: Color(0xff2ecc71),
-            accentColor: Colors.greenAccent,
+            primarySwatch: Colors.blue,
+            // primaryColor: Color(0xff2ecc71),
+            // accentColor: Colors.greenAccent,
+            primaryIconTheme: IconThemeData(
+              color: Colors.white,
+              size: 32,
+            ),
             iconTheme: IconThemeData(
               color: Colors.white,
               size: 32,
@@ -91,6 +98,7 @@ class MyApp extends StatelessWidget {
             Routes.HOME_SCREEN: (ctx) => HomeScreen(),
             Routes.MESSAGE_SCREEN: (ctx) => MessageScreen(),
             Routes.MAP_SCREEN: (ctx) => HeatMap(),
+            Routes.MAIN_CHAT_SCREEN: (ctx) => MainChatScreen(),
           },
         ),
       ),

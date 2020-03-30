@@ -17,6 +17,7 @@ class Auth extends ChangeNotifier {
   bool _isAdmin;
   bool _isCoronaOne;
   bool _isCoronaTwo;
+  String _name;
 
   bool get isAuth {
     return _token != null;
@@ -32,6 +33,10 @@ class Auth extends ChangeNotifier {
 
   bool get isCoronaTwo {
     return _isCoronaTwo;
+  }
+
+  String get getName {
+    return _name;
   }
 
   String get token {
@@ -64,6 +69,7 @@ class Auth extends ChangeNotifier {
   }
 
   Future<void> signIn(String email, String password, bool isAdmin) async {
+    final databaseReference = FirebaseDatabase.instance.reference();
     final _user = (await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: email, password: password))
         .user;
@@ -76,6 +82,13 @@ class Auth extends ChangeNotifier {
     _isCoronaOne = null;
     _isCoronaTwo = null;
 
+    databaseReference.child("Users").once().then((DataSnapshot snapshot) {
+      for(var id in snapshot.value.keys){
+        if(_userId == id)
+        _name = snapshot.value[id]['Username'];
+      }
+    });
+
     _autoLogout();
     notifyListeners();
 
@@ -86,6 +99,7 @@ class Auth extends ChangeNotifier {
       'expiryDate': _tokenExpiryDate.toIso8601String(),
       'isAdmin': _isAdmin,
       'isCorona': _isCoronaOne,
+      'name': _name,
     });
     prefs.setString('userData', userData);
   }
@@ -101,7 +115,7 @@ class Auth extends ChangeNotifier {
     _userId = _user.uid;
     _isCoronaOne = null;
     _isCoronaTwo = null;
-    
+
     _autoLogout();
     notifyListeners();
 
@@ -112,6 +126,7 @@ class Auth extends ChangeNotifier {
       'expiryDate': _tokenExpiryDate.toIso8601String(),
       'isAdmin': false,
       'isCorona': null,
+      'name': null,
     });
     prefs.setString('userData', userData);
   }
@@ -134,11 +149,37 @@ class Auth extends ChangeNotifier {
     _isAdmin = extractedData['isAdmin'];
     _isCoronaOne = extractedData['isCorona'];
     _isCoronaTwo = extractedData['isCorona'];
+    _name = extractedData['name'];
     _tokenExpiryDate = expiryDate;
 
     notifyListeners();
     _autoLogout();
     return true;
+  }
+
+  Future<void> setName(String name) async {
+    _name = name;
+
+    final databaseReference = FirebaseDatabase.instance.reference();
+    databaseReference.child("Users").child(_userId).set(
+      {
+        'Username': name,
+      },
+    );
+
+    final prefs = await SharedPreferences.getInstance();
+    final extractedData =
+        json.decode(prefs.getString('userData')) as Map<String, Object>;
+    String userData = json.encode({
+      'token': extractedData['token'],
+      'userId': extractedData['userId'],
+      'expiryDate': _tokenExpiryDate.toIso8601String(),
+      'isAdmin': false,
+      'isCorona': _isCoronaOne,
+      'name': _name,
+    });
+    prefs.setString('userData', userData);
+    notifyListeners();
   }
 
   Future<void> setCoronaOne(bool value) async {
@@ -200,6 +241,7 @@ class Auth extends ChangeNotifier {
       'expiryDate': _tokenExpiryDate.toIso8601String(),
       'isAdmin': false,
       'isCorona': _isCoronaOne,
+      'name': _name,
     });
     prefs.setString('userData', userData);
     notifyListeners();
@@ -260,6 +302,7 @@ class Auth extends ChangeNotifier {
       'expiryDate': _tokenExpiryDate.toIso8601String(),
       'isAdmin': false,
       'isCorona': _isCoronaTwo,
+      'name': _name,
     });
     prefs.setString('userData', userData);
     notifyListeners();
