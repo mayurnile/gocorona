@@ -73,16 +73,14 @@ class Auth extends ChangeNotifier {
     final _tokenResult = await _user.getIdToken();
     _token = _tokenResult.token;
     _tokenExpiryDate = _tokenResult.expirationTime;
-
     _userId = _user.uid;
     _isAdmin = isAdmin;
     _isCoronaOne = null;
     _isCoronaTwo = null;
 
     databaseReference.child("Users").once().then((DataSnapshot snapshot) {
-      for(var id in snapshot.value.keys){
-        if(_userId == id)
-        _name = snapshot.value[id]['Username'];
+      for (var id in snapshot.value.keys) {
+        if (_userId == id) _name = snapshot.value[id]['Username'];
       }
     });
 
@@ -126,6 +124,22 @@ class Auth extends ChangeNotifier {
       'name': null,
     });
     prefs.setString('userData', userData);
+  }
+
+  void updateToken() {
+    print('Function update token');
+    print('Before Refresh : $_token');
+    FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+    if (firebaseAuth.currentUser() != null) {
+      firebaseAuth.currentUser().then((val) {
+        val.getIdToken(refresh: true).then((onValue) {
+          _token = onValue.token;
+          _tokenExpiryDate = onValue.expirationTime;
+          print('After Refresh : $_token');
+        });
+      });
+    }
+    notifyListeners();
   }
 
   Future<bool> tryAutoLogin() async {
@@ -305,6 +319,10 @@ class Auth extends ChangeNotifier {
       _authTimer.cancel();
     }
     final timeToExpiry = _tokenExpiryDate.difference(DateTime.now()).inSeconds;
-    _authTimer = Timer(Duration(seconds: timeToExpiry), logout);
+    print(timeToExpiry);
+    if(timeToExpiry < 20){
+      updateToken();
+    }
+    _authTimer = Timer(Duration(seconds: timeToExpiry - 20), updateToken);
   }
 }
