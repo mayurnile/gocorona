@@ -104,7 +104,7 @@ class GroceriesDonate extends State<Groceries> {
             Padding(
               padding: const EdgeInsets.all(12.0),
               child: Text(
-                'Received Groceries',
+                'Donated Groceries',
                 style: Theme.of(context).textTheme.subhead,
               ),
             ),
