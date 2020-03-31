@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../providers/auth.dart';
 import '../providers/notifications.dart';
 
+import './admindistress.dart';
+
 class AdminScreen extends StatefulWidget {
   @override
   _AdminScreenState createState() => _AdminScreenState();
@@ -27,7 +29,6 @@ class _AdminScreenState extends State<AdminScreen> {
       form.save();
       print('Title : $_title');
       print('Message : $_message');
-      //TODO, code to store on database
       await Provider.of<MyNotifications>(context)
           .addNotificationAdmin(_title, _message);
     }
@@ -40,7 +41,7 @@ class _AdminScreenState extends State<AdminScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Admin Panel'),
+        title: Text('Admin Panel', style: Theme.of(context).textTheme.subtitle),
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -56,79 +57,100 @@ class _AdminScreenState extends State<AdminScreen> {
       ),
       body: Form(
         key: _formKey,
-        child: Column(
-          children: <Widget>[
-            Text(
-              'Send Notification',
-              style: Theme.of(context)
-                  .textTheme
-                  .subtitle
-                  .copyWith(color: Colors.black),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(22.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Title : ',
-                    style: Theme.of(context).textTheme.subhead,
-                  ),
-                  SizedBox(
-                    width: 44,
-                  ),
-                  Flexible(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: 'Enter Title Here',
-                        hintStyle: Theme.of(context).textTheme.body1,
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                'Send Notification',
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle
+                    .copyWith(color: Colors.black),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(22.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      'Title : ',
+                      style: Theme.of(context).textTheme.subhead,
+                    ),
+                    SizedBox(
+                      width: 44,
+                    ),
+                    Flexible(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          hintText: 'Enter Title Here',
+                          hintStyle: Theme.of(context).textTheme.body1,
+                        ),
+                        onSaved: (value) {
+                          _title = value;
+                        },
                       ),
-                      onSaved: (value) {
-                        _title = value;
-                      },
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(22.0),
-              child: Row(
-                children: <Widget>[
-                  Text(
-                    'Message : ',
-                    style: Theme.of(context).textTheme.subhead,
-                  ),
-                  Flexible(
-                    child: TextFormField(
-                      decoration: InputDecoration(
-                        hintText: 'Enter Message Here',
-                        hintStyle: Theme.of(context).textTheme.body1,
+              Padding(
+                padding: const EdgeInsets.all(22.0),
+                child: Row(
+                  children: <Widget>[
+                    Text(
+                      'Message : ',
+                      style: Theme.of(context).textTheme.subhead,
+                    ),
+                    Flexible(
+                      child: TextFormField(
+                        decoration: InputDecoration(
+                          hintText: 'Enter Message Here',
+                          hintStyle: Theme.of(context).textTheme.body1,
+                        ),
+                        onSaved: (value) {
+                          _message = value;
+                        },
                       ),
-                      onSaved: (value) {
-                        _message = value;
-                      },
                     ),
+                  ],
+                ),
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: RaisedButton(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 32.0,
+                    vertical: 8.0,
                   ),
-                ],
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30),
+                  ),
+                  color: Theme.of(context).primaryColor,
+                  onPressed: submitMessage,
+                  child: isLoading
+                      ? CircularProgressIndicator(
+                          valueColor:
+                              AlwaysStoppedAnimation<Color>(Colors.white),
+                        )
+                      : Text(
+                          'Notify All',
+                          style: Theme.of(context).textTheme.button,
+                        ),
+                ),
               ),
-            ),
-            RaisedButton(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 32.0,
-                vertical: 8.0,
+              Text(
+                'Distress Calls',
+                style: Theme.of(context)
+                    .textTheme
+                    .subtitle
+                    .copyWith(color: Colors.black),
               ),
-              color: Theme.of(context).primaryColor,
-              onPressed: submitMessage,
-              child: isLoading
-                  ? CircularProgressIndicator(
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                    )
-                  : Text(
-                      'Notify All',
-                      style: Theme.of(context).textTheme.button,
-                    ),
-            ),
-          ],
+              Expanded(
+                child: AdminDistress(),
+              ),
+            ],
+          ),
         ),
       ),
     );

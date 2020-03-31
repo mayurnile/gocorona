@@ -3,10 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../providers/auth.dart';
+import 'dart:ui';
+import 'dart:async';
 
 class MainChatScreen extends StatefulWidget {
   @override
-  // MainChatScreen(this.id);
   _MainChatScreenState createState() => _MainChatScreenState();
 }
 
@@ -18,7 +19,22 @@ class _MainChatScreenState extends State<MainChatScreen> {
   String receiverUserName;
   String senderUserId;
   String message;
-  List<String> _messages = <String>[];
+  Timer timer;
+  List<String> _messages = <String>[
+    'Did you heard about the case of COVID-19 patient from our area ?',
+    'Yes I just heard that from my parents they told me that',
+    'Yeah the whole situation is very dangerous how can we survive in this type of dangerous situation ?',
+    'Do not worry I watched our PM Narendra Modi\'s news on tv, he said that we need to take good care of ourselves, wash hands in every half an hour and use sanitizers, avoid public places by taking care of these things we can avoid the threat created by corona virus',
+    'Yes You are right all we need to do is stay at home and stay safe.'
+  ];
+
+  List<int> _orders = <int>[
+    0,
+    1,
+    0,
+    1,
+    0,
+  ];
 
   @override
   void didChangeDependencies() {
@@ -31,20 +47,14 @@ class _MainChatScreenState extends State<MainChatScreen> {
     senderUserId = Provider.of<Auth>(context).userId;
   }
 
-  void sendindatabase() {
-    print("Entered send in database");
-    print(message);
+  @override
+  void dispose() {
+    timer?.cancel();
+    super.dispose();
+  }
 
-    databaseReference
-        .child("Messages")
-        .child(senderUserId)
-        .child(receiverUserId)
-        .push()
-        .set({
-      'Message': message,
-      'Order': '0',
-    });
-
+  void receivefromdatabase() {
+    print("Entered receivefromdatabase");
     databaseReference
         .child("Messages")
         .child(receiverUserId)
@@ -64,20 +74,21 @@ class _MainChatScreenState extends State<MainChatScreen> {
                 .then(
               (DataSnapshot snapshot) {
                 print(snapshot.value['Order']);
-                if (snapshot.value['Order'] == "0") {
+                if (snapshot.value['Order'] == '0') {
                   _messages.insert(0, snapshot.value['Message']);
-                  print('fetched from database' +snapshot.value['Message']);
+                  print('fetched from database' + snapshot.value['Message']);
                   databaseReference
                       .child("Messages")
-                      .child(senderUserId)
                       .child(receiverUserId)
+                      .child(senderUserId)
                       .child(key)
-                      .set(
+                      .update(
                     {
                       'Message': snapshot.value['Message'],
                       'Order': '1',
                     },
                   );
+                  _messages.add(snapshot.value['Message']);
                 }
               },
             );
@@ -88,11 +99,27 @@ class _MainChatScreenState extends State<MainChatScreen> {
     setState(() {});
   }
 
+  void sendindatabase() {
+    print("Entered send in database");
+    print(message);
+
+    databaseReference
+        .child("Messages")
+        .child(senderUserId)
+        .child(receiverUserId)
+        .push()
+        .set({
+      'Message': message,
+      'Order': '0',
+    });
+    setState(() {});
+  }
+
   void _handleSubmit(String text) {
     _messageController.clear();
 
     setState(() {
-      _messages.insert(0, text);
+      _messages.add(text);
     });
   }
 
@@ -100,9 +127,14 @@ class _MainChatScreenState extends State<MainChatScreen> {
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
 
-    _messages = _messages.reversed.toList();
+    //_messages = _messages.reversed.toList();
+    //TODO, enabled this later
+    // timer = Timer.periodic(
+    //   Duration(seconds: 15),
+    //   (Timer t) => receivefromdatabase(),
+    // );
+    // Timer.run(() => receivefromdatabase);
 
-    print(mediaQuery);
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -113,7 +145,7 @@ class _MainChatScreenState extends State<MainChatScreen> {
       ),
       backgroundColor: Theme.of(context).primaryColor,
       body: SingleChildScrollView(
-              child: Container(
+        child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(30),
@@ -131,17 +163,41 @@ class _MainChatScreenState extends State<MainChatScreen> {
                 width: mediaQuery.size.width,
                 height: mediaQuery.size.height * 0.7,
                 child: ListView.builder(
-                  itemCount: _messages.length,
-                  itemBuilder: (ctx, index) => ListTile(
-                    trailing: Text(
-                      _messages[index],
-                      style: Theme.of(context)
-                          .textTheme
-                          .subhead
-                          .copyWith(color: Colors.black),
+                    physics: BouncingScrollPhysics(),
+                    padding: const EdgeInsets.all(12.0),
+                    itemCount: _messages.length,
+                    itemBuilder: (ctx, index) {
+                      return Align(
+                        alignment: _orders[index] == 0
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Container(
+                          margin: const EdgeInsets.symmetric(vertical: 8.0),
+                          padding: const EdgeInsets.all(8.0),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.grey.withOpacity(0.3),
+                          ),
+                          width: mediaQuery.size.width * 0.6,
+                          child: Text(
+                            _messages[index],
+                            style: Theme.of(context).textTheme.body1.copyWith(
+                                  color: Colors.black.withOpacity(0.8),
+                                ),
+                          ),
+                        ),
+                      );
+                    }
+                    // ListTile(
+                    //   trailing: Text(
+                    //     _messages[index],
+                    //     style: Theme.of(context)
+                    //         .textTheme
+                    //         .subhead
+                    //         .copyWith(color: Colors.black),
+                    //   ),
+                    // ),
                     ),
-                  ),
-                ),
               ),
               Container(
                 alignment: Alignment.center,
@@ -172,11 +228,8 @@ class _MainChatScreenState extends State<MainChatScreen> {
                       ),
                       onPressed: () {
                         message = _messageController.text;
-                        _handleSubmit(message);
-                        //TODO, logic of senfing here...
-                        // showText();
-
                         sendindatabase();
+                        _handleSubmit(message);
                       },
                     ),
                   ],

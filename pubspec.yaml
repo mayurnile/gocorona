@@ -41,6 +41,9 @@ dev_dependencies:
   #storage
   shared_preferences: ^0.5.6+3
   
+  #dialing phone
+  url_launcher: ^5.4.2
+
   #location
   google_maps_flutter: ^0.5.20+1
   geolocator: ^5.1.3
