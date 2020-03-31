@@ -58,50 +58,51 @@ class _MyMapPageState extends State<MyMapPage> {
     markers.add(differentuser);
   }
 
-int checkid = 0;
+  int checkid = 0;
 
   void updateRecord(
-      double latitude, double longitude, List<Placemark> placemark) {
-
+    double latitude,
+    double longitude,
+    List<Placemark> placemark,
+  ) {
     databaseReference.child("LOCATIONS").once().then((DataSnapshot snapshot) {
       for (var userids in snapshot.value.keys) {
         if (overalluserid.toString() == userids.toString()) {
           checkid = 1;
-            if (checkid == 0) {
-              databaseReference.child("LOCATIONS").child(overalluserid).set({
-              'latitude': latitude,
-              'longitude': longitude,
-              'Address': address,
-              'Country': placemark[0].country,
-              'Locality': placemark[0].locality,
-              'AdministrativeArea': placemark[0].administrativeArea,
-              'PostalCode': placemark[0].postalCode,
-              'Name': placemark[0].name,
-              'ISO_CountryCode': placemark[0].isoCountryCode,
-              'SubLocality': placemark[0].subLocality,
-              'SubThoroughfare': placemark[0].subThoroughfare,
-              'Thoroughfare': placemark[0].thoroughfare,
-            });
-          } 
-          else {
-            databaseReference.child("LOCATIONS").child(overalluserid).update({
-              'latitude': latitude,
-              'longitude': longitude,
-              'Address': address,
-              'Country': placemark[0].country,
-              'Locality': placemark[0].locality,
-              'AdministrativeArea': placemark[0].administrativeArea,
-              'PostalCode': placemark[0].postalCode,
-              'Name': placemark[0].name,
-              'ISO_CountryCode': placemark[0].isoCountryCode,
-              'SubLocality': placemark[0].subLocality,
-              'SubThoroughfare': placemark[0].subThoroughfare,
-              'Thoroughfare': placemark[0].thoroughfare,
-            });
-          }
+          databaseReference.child("LOCATIONS").child(overalluserid).update({
+            'latitude': latitude,
+            'longitude': longitude,
+            'Address': address,
+            'Country': placemark[0].country,
+            'Locality': placemark[0].locality,
+            'AdministrativeArea': placemark[0].administrativeArea,
+            'PostalCode': placemark[0].postalCode,
+            'Name': placemark[0].name,
+            'ISO_CountryCode': placemark[0].isoCountryCode,
+            'SubLocality': placemark[0].subLocality,
+            'SubThoroughfare': placemark[0].subThoroughfare,
+            'Thoroughfare': placemark[0].thoroughfare,
+          });
         }
       }
     });
+    print(checkid);
+    if (checkid == 0) {
+      databaseReference.child("LOCATIONS").child(overalluserid).set({
+        'latitude': latitude,
+        'longitude': longitude,
+        'Address': address,
+        'Country': placemark[0].country,
+        'Locality': placemark[0].locality,
+        'AdministrativeArea': placemark[0].administrativeArea,
+        'PostalCode': placemark[0].postalCode,
+        'Name': placemark[0].name,
+        'ISO_CountryCode': placemark[0].isoCountryCode,
+        'SubLocality': placemark[0].subLocality,
+        'SubThoroughfare': placemark[0].subThoroughfare,
+        'Thoroughfare': placemark[0].thoroughfare,
+      });
+    }
 
     databaseReference.child("CoronaYes").once().then((DataSnapshot snapshot) {
       for (var id in snapshot.value.keys) {
@@ -122,7 +123,6 @@ int checkid = 0;
         });
       }
     });
-
   }
 
   void getAddress(double latitude, double longitude) async {
@@ -206,4 +206,3 @@ int checkid = 0;
     );
   }
 }
- 

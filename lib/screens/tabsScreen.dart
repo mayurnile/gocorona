@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../screens/homeScreen.dart';
 import '../screens/messageScreen.dart';
 import '../screens/distresscall.dart';
+import '../screens/groceries.dart';
 
 import '../providers/auth.dart';
 class TabsScreen extends StatefulWidget {
@@ -30,7 +31,7 @@ class _TabsScreenState extends State<TabsScreen>
   @override
   void initState() {
     _tabController = TabController(
-      length: 3,
+      length: 4,
       vsync: this,
       initialIndex: 0,
     );
@@ -83,6 +84,9 @@ class _TabsScreenState extends State<TabsScreen>
         Tab(
           text: 'Call',
         ),
+        Tab(
+          text: 'Help',
+        ),
       ],
     );
 
@@ -119,6 +123,10 @@ class _TabsScreenState extends State<TabsScreen>
                   HomeScreen(),
                   MessageScreen(),
                   Distress(),
+                  Groceries(),
+                  // Container(
+                  //   color:Colors.red,
+                  // ),
                 ],
               ),
             ),
